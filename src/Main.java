@@ -11,15 +11,15 @@ import java.util.Scanner;
 
 public class Main {
     private static String FILE_NAME = "H:\\ideaProj\\transportProblem\\input.txt";
-    int need;
-    int cost;
+
     public static void main(String[] args) throws IOException {
         //Files.lines(Paths.get(FILE_NAME), StandardCharsets.UTF_8).forEach(System.out::println);
         //Files.lines(Paths.get(FILE_NAME), StandardCharsets.UTF_8).toArray(new String[lines.size()]);
         //List<String> stringList = Files.readAllLines(Paths.get(FILE_NAME), StandardCharsets.UTF_8);
         //String[] stringArray = stringList.toArray(new String[]{});
         //System.out.println(strArrChecker(stringArray));
-        TProblem tProblem=new TProblem(FILE_NAME);
+        TProblem tProblem = new TProblem(FILE_NAME);
+        if (tProblem!=null)
         tProblem.makePlanSZ();
 
     }
