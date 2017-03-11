@@ -11,13 +11,10 @@ import java.util.Scanner;
  */
 public class TProblem {
     private String[] stringArray;
-    private int[][] costArray;
-    private int[][] plan;
-    private int[] need;
-    private int[] have;
-    private int min, imin, jmin;
-    private int sizeI;
-    private int sizeJ;
+    private int[][] costArray, plan;
+    private int[] need, have, u, v;
+    private boolean[] ub, vb;
+    private int min, imin, jmin, sizeI, sizeJ;
 
     /*   public void setStringArray(String FILE_NAME) throws IOException {
            List<String> stringList = Files.readAllLines(Paths.get(FILE_NAME), StandardCharsets.UTF_8);
@@ -46,6 +43,14 @@ public class TProblem {
         }
     }
 
+    public void optimize() {
+        initPots();
+        findPots();
+        for (int i = 0; i < sizeI && min == 0; i++)
+            System.out.println(u[i]+" ");
+        for (int j = 0; j < sizeJ && min == 0; j++)
+            System.out.println(v[j]+" ");
+    }
 
     public TProblem(String FILE_NAME) throws IOException {
         List<String> stringList = Files.readAllLines(Paths.get(FILE_NAME), StandardCharsets.UTF_8);
@@ -143,6 +148,38 @@ public class TProblem {
         // costArray[sizeI][jmin] = costArray[sizeI][jmin] - costArray[imin][jmin];
         // costArray[imin][jmin] = 0;
 
+    }
+
+    private void findPots() {
+        if (u == null)
+            initPots();
+        for (int i = 0; i < sizeI; i++)
+            if (ub[i] == true)
+                for (int j = 0; j < sizeJ; j++)
+                    if (plan[i][j] != 0 && vb[j] == false) {
+                        v[j] = costArray[i][j] - u[i];
+                        vb[j] = true;
+                    }
+        for (int j = 0; j < sizeJ; j++)
+            if (vb[j] == true)
+                for (int i = 0; i < sizeI; i++)
+                    if (plan[i][j] != 0 && ub[i] == false) {
+                        u[i] = costArray[i][j] - v[j];
+                        ub[i] = true;
+                    }
+    }
+
+    private void initPots() {
+        u = new int[sizeI];
+        v = new int[sizeJ];
+        ub = new boolean[sizeI];
+        vb = new boolean[sizeJ];
+        for (int i = 0; i < sizeI; i++)
+            ub[i] = false;
+        for (int j = 0; j < sizeJ; j++)
+            vb[j] = false;
+        u[0] = 0;
+        ub[0] = true;
     }
 
     private void printMass(int[][] mass) {
