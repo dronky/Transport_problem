@@ -13,7 +13,8 @@ public class TProblem {
     String[] stringArray;
     int[][] costArray;
     int[][] plan;
-
+    int[] need;
+    int[] have;
     int min, imin, jmin;
     int sizeI;
     int sizeJ;
@@ -49,6 +50,8 @@ public class TProblem {
             costArray = convertToIntArr(stringArray);
             if (closeChecker()) {
                 plan = makePlan(costArray);
+                need = makeNeed(costArray);   //converting double array to 2 sigle
+                have = makeHave(costArray);
                 System.out.println("Import success");
                 System.out.println("" + "I: " + sizeI + " J: " + sizeJ);
             } else System.out.println("Import failed. problem not close");
@@ -117,7 +120,7 @@ public class TProblem {
                 plan[imin][jmin] = costArray[sizeI][jmin];
                 costArray[imin][sizeJ] = costArray[imin][sizeJ] - costArray[sizeI][jmin];
                 costArray[sizeI][jmin] = 0;
-                for (int i = 0; i < sizeI; i++) {   
+                for (int i = 0; i < sizeI; i++) {
                     costArray[i][jmin] = 0;
                 }
             } else
@@ -194,6 +197,20 @@ public class TProblem {
         for (int j = 0; j <= sizeJ; j++)
             planArray[sizeI][j] = arr[sizeI][j];
         return planArray;
+    }
+
+    private int[] makeNeed(int[][] arr) {
+        int[] need = new int[sizeJ];
+        for (int j = 0; j < sizeJ; j++)
+            need[j] = arr[sizeI][j];
+        return need;
+    }
+
+    private int[] makeHave(int[][] arr) {
+        int[] have = new int[sizeI];
+        for (int i = 0; i < sizeI; i++)
+            have[i] = arr[i][sizeJ];
+        return have;
     }
 
     private boolean strArrChecker() {

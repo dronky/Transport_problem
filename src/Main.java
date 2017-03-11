@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static String FILE_NAME = "H:\\ideaProj\\transportProblem\\input2.txt";
+    private static String FILE_NAME = "H:\\ideaProj\\transportProblem\\input.txt";
     int need;
     int cost;
     public static void main(String[] args) throws IOException {
