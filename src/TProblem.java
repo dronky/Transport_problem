@@ -11,7 +11,7 @@ import java.util.Scanner;
  */
 public class TProblem {
     private String[] stringArray;
-    private int[][] costArray, plan;
+    private int[][] costArray, plan, temp;
     private int[] need, have, u, v;
     private boolean[] ub, vb;
     private int min, imin, jmin, sizeI, sizeJ;
@@ -29,9 +29,11 @@ public class TProblem {
                 findMin();
                 processMin();
             }
+            System.out.println("plan:");
+            printMass(plan);
+            costArray = clone(temp);
         }
-        System.out.println("plan:");
-        printMass(plan);
+
     }
 
     public void makePlanSZ() {
@@ -40,16 +42,18 @@ public class TProblem {
             processSZ();
             System.out.println("plan:");
             printMass(plan);
+            costArray = clone(temp);
         }
     }
 
     public void optimize() {
         initPots();
         findPots();
-        for (int i = 0; i < sizeI && min == 0; i++)
-            System.out.println(u[i]+" ");
-        for (int j = 0; j < sizeJ && min == 0; j++)
-            System.out.println(v[j]+" ");
+        findPots();
+        for (int i = 0; i < sizeI; i++)
+            System.out.println(u[i] + " ");
+        for (int j = 0; j < sizeJ; j++)
+            System.out.println(v[j] + " ");
     }
 
     public TProblem(String FILE_NAME) throws IOException {
@@ -57,14 +61,22 @@ public class TProblem {
         stringArray = stringList.toArray(new String[]{});
         if (strArrChecker()) {
             costArray = convertToIntArr(stringArray);
-            need = makeNeed(costArray);   //converting double array to 2 sigle
-            have = makeHave(costArray);
+            temp = clone(costArray);
             if (closeChecker()) {
+                need = makeNeed(costArray);   //converting double array to 2 sigle
+                have = makeHave(costArray);
                 plan = makePlan(costArray);
                 System.out.println("Import success");
                 System.out.println("" + "I: " + sizeI + " J: " + sizeJ);
             } else System.out.println("Import failed. problem not close");
         }
+    }
+
+    protected int[][] clone(int[][] from){
+        int[][] temp = from.clone();
+        for(int i = 0; i < from.length; i++)
+            temp[i] = from[i].clone();
+        return temp;
     }
 
     private void findMin() {
@@ -91,24 +103,24 @@ public class TProblem {
 
     private void processSZ() {
         for (int i = 0; i < sizeI; i++) {
-            for (int j = 0; j < sizeJ && have[i] > 0; j++) {
+            for (int j = 0; j < sizeJ && costArray[i][sizeJ] > 0; j++) {
                 //if need>have
-                if (need[j] > have[i]) {
-                    plan[i][j] = have[i];
-                    need[j] = need[j] - have[i];
-                    have[i] = 0;
+                if (costArray[sizeI][j] > costArray[i][sizeJ]) {
+                    plan[i][j] = costArray[i][sizeJ];
+                    costArray[sizeI][j] = costArray[sizeI][j] - costArray[i][sizeJ];
+                    costArray[i][sizeJ] = 0;
                 }
                 //if need<have
-                if (need[j] < have[i]) {
-                    plan[i][j] = need[j];
-                    have[i] = have[i] - need[j];
-                    need[j] = 0;
+                if (costArray[sizeI][j] < costArray[i][sizeJ]) {
+                    plan[i][j] = costArray[sizeI][j];
+                    costArray[i][sizeJ] = costArray[i][sizeJ] - costArray[sizeI][j];
+                    costArray[sizeI][j] = 0;
                 }
                 //if need=have
-                if (need[j] == have[i]) {
-                    plan[i][j] = have[i];
-                    have[i] = 0;
-                    need[j] = 0;
+                if (costArray[sizeI][j] == costArray[i][sizeJ]) {
+                    plan[i][j] = costArray[i][sizeJ];
+                    costArray[i][sizeJ] = 0;
+                    costArray[sizeI][j] = 0;
                 }
             }
         }
@@ -202,27 +214,27 @@ public class TProblem {
 
     //check for full object init
     private boolean objInitialized() {
-        return costArray != null && need != null && have != null && plan != null ? true : false;
+        return costArray != null && plan != null ? true : false;
     }
 
     //check if all shops got resources from stock
     private boolean needEqHave() {
         int n = 0;
         for (int i = 0; i < sizeI && n == 0; i++)
-            n += have[i];
+            n += costArray[i][sizeJ];
         for (int j = 0; j < sizeJ && n == 0; j++)
-            n += need[j];
+            n += costArray[sizeI][j];
         return n == 0 ? true : false;
     }
 
     //Check if need == have
     private boolean closeChecker() {
-        int need_lc = 0, have_lc = 0;
+        int need = 0, have = 0;
         for (int i = 0; i < sizeI; i++)
-            have_lc += have[i];
+            have += costArray[i][sizeJ];
         for (int j = 0; j < sizeJ; j++)
-            need_lc += need[j];
-        return need_lc == costArray[sizeI][sizeJ] && have_lc == costArray[sizeI][sizeJ] ? true : false;
+            need += costArray[sizeI][j];
+        return need == costArray[sizeI][sizeJ] && have == costArray[sizeI][sizeJ] ? true : false;
     }
 
     private int[][] convertToIntArr(String[] stringArray) {
