@@ -117,7 +117,7 @@ public class TProblem {
                 plan[imin][jmin] = costArray[sizeI][jmin];
                 costArray[imin][sizeJ] = costArray[imin][sizeJ] - costArray[sizeI][jmin];
                 costArray[sizeI][jmin] = 0;
-                for (int i = 0; i < sizeI; i++) {
+                for (int i = 0; i < sizeI; i++) {   
                     costArray[i][jmin] = 0;
                 }
             } else
