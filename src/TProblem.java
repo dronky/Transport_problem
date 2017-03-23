@@ -11,7 +11,7 @@ import java.util.Scanner;
  */
 public class TProblem {
     private String[] stringArray;
-    private int[][] costArray, plan, temp;
+    private int[][] costArray, plan, temp, freeCell;
     private int[] need, have, u, v;
     private boolean[] ub, vb;
     private int min, imin, jmin, sizeI, sizeJ;
@@ -47,8 +47,7 @@ public class TProblem {
     }
 
     public void optimize() {
-        initPots();
-        findPots();
+        //initPots();
         findPots();
         for (int i = 0; i < sizeI; i++)
             System.out.println(u[i] + " ");
@@ -72,9 +71,9 @@ public class TProblem {
         }
     }
 
-    protected int[][] clone(int[][] from){
+    protected int[][] clone(int[][] from) {
         int[][] temp = from.clone();
-        for(int i = 0; i < from.length; i++)
+        for (int i = 0; i < from.length; i++)
             temp[i] = from[i].clone();
         return temp;
     }
@@ -163,22 +162,35 @@ public class TProblem {
     }
 
     private void findPots() {
+        int tmpU = 0, tmpV = 0;
         if (u == null)
             initPots();
-        for (int i = 0; i < sizeI; i++)
-            if (ub[i] == true)
-                for (int j = 0; j < sizeJ; j++)
-                    if (plan[i][j] != 0 && vb[j] == false) {
-                        v[j] = costArray[i][j] - u[i];
-                        vb[j] = true;
-                    }
-        for (int j = 0; j < sizeJ; j++)
-            if (vb[j] == true)
-                for (int i = 0; i < sizeI; i++)
-                    if (plan[i][j] != 0 && ub[i] == false) {
-                        u[i] = costArray[i][j] - v[j];
-                        ub[i] = true;
-                    }
+        while (tmpU != sizeI && tmpV != sizeJ) {
+            for (int i = 0; i < sizeI; i++)
+                if (ub[i] == true)
+                    for (int j = 0; j < sizeJ; j++)
+                        if (plan[i][j] != 0 && vb[j] == false) {
+                            v[j] = costArray[i][j] - u[i];
+                            vb[j] = true;
+                        }
+            for (int j = 0; j < sizeJ; j++)
+                if (vb[j] == true)
+                    for (int i = 0; i < sizeI; i++)
+                        if (plan[i][j] != 0 && ub[i] == false) {
+                            u[i] = costArray[i][j] - v[j];
+                            ub[i] = true;
+                        }
+            for (int i = 0; i < sizeI; i++)
+                if (ub[i])
+                    tmpU++;
+            for (int j = 0; j < sizeJ; j++)
+                if (vb[j])
+                    tmpV++;
+        }
+    }
+
+    private void findFreeCells(){
+
     }
 
     private void initPots() {

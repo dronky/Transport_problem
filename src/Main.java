@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static String FILE_NAME = "H:\\ideaProj\\transportProblem\\input3.txt";
+    private static String FILE_NAME = "H:\\ideaProj\\transportProblem\\input2.txt";
 
     public static void main(String[] args) throws IOException {
         //Files.lines(Paths.get(FILE_NAME), StandardCharsets.UTF_8).forEach(System.out::println);
